@@ -16,6 +16,7 @@ const sendErrorsFromDB = (res, dbErrors) => {
 const login = (req, res, next) => {
   const email = req.body.email || ''
   const password = req.body.password || ''
+  
   User.findOne({email}, (err, user) => {
   if(err) {
   return sendErrorsFromDB(res, err)
@@ -28,5 +29,12 @@ const login = (req, res, next) => {
   } else {
   return res.status(400).send({errors: ['Usuário/Senha inválidos']})
   }
+  })
+}
+
+const validateToken = (req, res, next) => {
+  const token = req.body.token || ''
+  jwt.verify(token, env.authSecret, function(err, decoded) {
+  return res.status(200).send({valid: !err})
   })
 }
